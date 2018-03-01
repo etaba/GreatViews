@@ -15,4 +15,4 @@ The code has commented-out sections which provide multithreaded crawling. While 
 If you'd like to use this crawler to search for other airbnb aspects, simply modify the `KEYWORDS` list to include the keywords you believe indicate a room has what you need.
 
 ## Example output:
-![Alt text](/greatViewsScreenshot.jpg?raw=true "Example Output")
+![Alt text](greatViewsScreenshot.png?raw=true "Example Output")
