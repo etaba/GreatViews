@@ -7,6 +7,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By 
 from selenium.webdriver.common.keys import Keys
 #from multiprocessing.dummy import Pool as ThreadPool
+import time
 
 
 CLASS_READ_MORE = "_b82bweu"
@@ -43,6 +44,7 @@ def thoroughReviewAnalysis(url,driver=None):
 
             nextPageLink = driver.find_element_by_xpath('//li[@class="next next_page"]/a[1]')
             driver.execute_script("arguments[0].click();", nextPageLink)
+            time.sleep(1)
         except Exception as e:
             break
     urlIsGood = False
@@ -105,7 +107,7 @@ def greatViews(url,mode,minPrice,maxPrice,keywords):
         roomUrls = ["https://www.airbnb.com/rooms/"+x for x in roomIds]
 
         #Multithreaded way: Do not use this, will get your IP added to airbnb's temporary blacklist :(
-        #if you do want to use this, move the selenium driver instantiation and garbage collection within the thoroughReviewAnalysis method 
+        #if you do want to use this, move the selenium driver instantiation and garbage collection within the thoroughReviewAnalysis method
         '''pool = ThreadPool(5)
         if mode == "quick":
             results = pool.map(quickReviewAnalysis,roomUrls)
@@ -113,7 +115,7 @@ def greatViews(url,mode,minPrice,maxPrice,keywords):
             results = pool.map(thoroughReviewAnalysis,roomUrls)
         pool.close() 
         pool.join()'''
-        
+
         #Single threaded alternative:
         if mode == "quick":
             results = [quickReviewAnalysis(url) for url in roomUrls]
@@ -129,10 +131,14 @@ def greatViews(url,mode,minPrice,maxPrice,keywords):
 
 # ./greatViews.py <quick | thorough> <minPrice> <maxPrice> <url>
 if __name__ == "__main__":
+    if sys.argv[1] == "single":
+        driver = webdriver.Chrome()
+        thoroughReviewAnalysis(sys.argv[2], driver)
+        driver.close()
+        sys.exit()
     mode = "thorough" if sys.argv[1] == "thorough" else "quick"
     [minPrice,maxPrice,url] = sys.argv[2:5]
     goodUrls = greatViews(url,mode,minPrice,maxPrice,KEYWORDS)
     print "Results:"
     for url in goodUrls:
         print url
-
